@@ -1,0 +1,62 @@
+# CONFIG ##################################################################SERVER START
+#ip pool add name="pppoe-pool" ranges=10.1.1.62-10.1.1.72
+ip pool add name="pppoe-pool-for-vlan10" ranges=1.1.1.50-1.1.1.150
+ip pool add name="pppoe-pool-for-vlan20" ranges=2.2.2.50-2.2.2.150
+ip pool add name="pppoe-pool-for-vlan30" ranges=3.3.3.50-3.3.3.150
+ip pool add name="pppoe-pool-for-vlan40" ranges=4.4.4.50-4.4.4.150
+ip pool add name="pppoe-pool-for-vlan50" ranges=5.5.5.50-5.5.5.150
+ip pool add name="pppoe-pool-for-vlan60" ranges=6.6.6.50-6.6.6.150
+
+#ppp profile add name="pppoe-profile" local-address=10.1.1.1 remote-address=pppoe-pool
+ppp profile add name="pppoe-profile-for-vlan10" local-address=1.1.1.1 remote-address=pppoe-pool-for-vlan10
+ppp profile add name="pppoe-profile-for-vlan20" local-address=2.2.2.2 remote-address=pppoe-pool-for-vlan20
+ppp profile add name="pppoe-profile-for-vlan30" local-address=3.3.3.3 remote-address=pppoe-pool-for-vlan30
+ppp profile add name="pppoe-profile-for-vlan40" local-address=4.4.4.4 remote-address=pppoe-pool-for-vlan40
+ppp profile add name="pppoe-profile-for-vlan50" local-address=5.5.5.5 remote-address=pppoe-pool-for-vlan50
+ppp profile add name="pppoe-profile-for-vlan60" local-address=6.6.6.6 remote-address=pppoe-pool-for-vlan60
+
+#ppp secret add name=user password=passwd service=pppoe profile=pppoe-profile
+ppp secret add name=user-vlan10 password=passwd1 service=pppoe profile=pppoe-profile-for-vlan10
+ppp secret add name=user-vlan20 password=passwd2 service=pppoe profile=pppoe-profile-for-vlan20
+ppp secret add name=user-vlan30 password=passwd3 service=pppoe profile=pppoe-profile-for-vlan30
+ppp secret add name=user-vlan40 password=passwd4 service=pppoe profile=pppoe-profile-for-vlan40
+ppp secret add name=user-vlan50 password=passwd5 service=pppoe profile=pppoe-profile-for-vlan50
+ppp secret add name=user-vlan60 password=passwd6 service=pppoe profile=pppoe-profile-for-vlan60
+
+#interface pppoe-server server add service-name=internet interface=ether1 default-profile=pppoe-profile disabled=no
+interface pppoe-server server add service-name=internet-for-vlan10 interface=ether1 default-profile=pppoe-profile-for-vlan10 disabled=no
+interface pppoe-server server add service-name=internet-for-vlan20 interface=ether2 default-profile=pppoe-profile-for-vlan20 disabled=no
+interface pppoe-server server add service-name=internet-for-vlan30 interface=ether3 default-profile=pppoe-profile-for-vlan30 disabled=no
+interface pppoe-server server add service-name=internet-for-vlan40 interface=ether4 default-profile=pppoe-profile-for-vlan40 disabled=no
+interface pppoe-server server add service-name=internet-for-vlan50 interface=ether5 default-profile=pppoe-profile-for-vlan50 disabled=no
+interface pppoe-server server add service-name=internet-for-vlan60 interface=ether6 default-profile=pppoe-profile-for-vlan60 disabled=no
+# CONFIG ##################################################################SERVER END
+
+# CONFIG ################################################################## CLIENT START
+interface vlan add interface=eth1 vlan-id=10 name=vlan10
+interface vlan add interface=eth1 vlan-id=20 name=vlan20
+interface vlan add interface=eth1 vlan-id=30 name=vlan30
+interface vlan add interface=eth1 vlan-id=40 name=vlan40
+interface vlan add interface=eth1 vlan-id=50 name=vlan50
+interface vlan add interface=eth1 vlan-id=60 name=vlan60
+
+#interface pppoe-client add name=pppoe-user-eth1 user=user password=passwd interface=eth1 service-name=internet disabled=no
+interface pppoe-client add name=pppoe-user-vlan10 user=user-vlan10 password=passwd1 interface=vlan10  service-name=internet-for-vlan10 disabled=no
+interface pppoe-client add name=pppoe-user-vlan20 user=user-vlan20 password=passwd2 interface=vlan20  service-name=internet-for-vlan20 disabled=no
+interface pppoe-client add name=pppoe-user-vlan30 user=user-vlan30 password=passwd3 interface=vlan30  service-name=internet-for-vlan30 disabled=no
+interface pppoe-client add name=pppoe-user-vlan40 user=user-vlan40 password=passwd4 interface=vlan40  service-name=internet-for-vlan40 disabled=no
+interface pppoe-client add name=pppoe-user-vlan50 user=user-vlan50 password=passwd5 interface=vlan50  service-name=internet-for-vlan50 disabled=no
+interface pppoe-client add name=pppoe-user-vlan60 user=user-vlan60 password=passwd6 interface=vlan60  service-name=internet-for-vlan60 disabled=no
+# CONFIG ##################################################################CLIENT END
+# DECONFIG ################################################################## SERVER START
+/ip pool remove [find]
+/ppp profile remove [find]
+/interface pppoe-server server remove [find]
+/ip address remove [find]
+/ppp secret remove [find]
+# DECONFIG ################################################################## SEVER END
+
+# DECONFIG ################################################################## CLIENT START
+/interface pppoe-client remove [find]
+/interface vlan remove [find]
+# DECONFIG ################################################################## CLIENT END
