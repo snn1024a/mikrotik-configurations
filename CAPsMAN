@@ -29,12 +29,11 @@ add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united 
 /system script environment remove [find where name="ssidf"];
 
 ####################################################################CAPsMAN CONFIG END
-
-
 ################################################################CAPsMAN DECONFIG BEGIN
 /caps-man channel remove [find];
 /caps-man datapath remove [find];
 /caps-man configuration remove [find];
 /caps-man provisioning remove [find];
 /caps-man manager set ca-certificate=auto certificate=auto enabled=no;
+
 ##################################################################CAPsMAN DECONFIG END
