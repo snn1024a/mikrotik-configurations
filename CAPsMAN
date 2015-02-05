@@ -1,0 +1,40 @@
+##################################################################CAPsMAN CONFIG BEGIN
+:global site "SITE";
+:global ssidp "pay";
+:global ssidf "free";
+/caps-man channel
+add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=channel01 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=channel02 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2422 name=channel03 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2427 name=channel04 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2432 name=channel05 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2437 name=channel06 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2442 name=channel07 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2447 name=channel08 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2452 name=channel09 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2457 name=channel10 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2462 name=channel11 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2467 name=channel12 tx-power=5 width=20;
+add band=2ghz-b/g/n extension-channel=disabled frequency=2472 name=channel13 tx-power=5 width=20;
+/caps-man datapath
+add bridge="br-$site-payg" client-to-client-forwarding=no local-forwarding=no name="dpath-$site-payg";
+add bridge="br-$site-free" client-to-client-forwarding=no local-forwarding=no name="dpath-$site-free";
+/caps-man configuration
+add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-payg" datapath.bridge="br-$site-payg" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="$ssidp";
+add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-free" datapath.bridge="br-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="$ssidf";
+/caps-man manager set ca-certificate=auto certificate=auto enabled=yes;
+/caps-man provisioning add action=create-dynamic-enabled master-configuration="cap-$site-payg-cfg" slave-configuration="cap-$site-free-cfg" name-format=identity;
+/system script environment remove [find where name="site"];
+/system script environment remove [find where name="ssidp"];
+/system script environment remove [find where name="ssidf"];
+
+####################################################################CAPsMAN CONFIG END
+
+
+################################################################CAPsMAN DECONFIG BEGIN
+/caps-man channel remove [find];
+/caps-man datapath remove [find];
+/caps-man configuration remove [find];
+/caps-man provisioning remove [find];
+/caps-man manager set ca-certificate=auto certificate=auto enabled=no;
+##################################################################CAPsMAN DECONFIG END
