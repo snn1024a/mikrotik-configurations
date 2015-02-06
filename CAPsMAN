@@ -37,3 +37,44 @@ add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united 
 /caps-man manager set ca-certificate=auto certificate=auto enabled=no;
 
 ##################################################################CAPsMAN DECONFIG END
+################################################################################# TEST
+
+/caps-man datapath
+add bridge=br-free client-to-client-forwarding=no local-forwarding=no name=\
+    dpath-free
+add bridge=br-site-payg-bl10 client-to-client-forwarding=no local-forwarding=no \
+    name=dpath-payg-bl10
+add bridge=br-mana client-to-client-forwarding=no local-forwarding=no name=\
+    dpath-mana
+add bridge=br-site-payg-bl01 client-to-client-forwarding=no local-forwarding=no \
+    name=dpath-payg-bl01
+/caps-man configuration
+add country="united kingdom" datapath=dpath-payg-bl10 datapath.bridge=\
+    br-site-payg-bl10 datapath.client-to-client-forwarding=no \
+    datapath.local-forwarding=no hide-ssid=no mode=ap name=cap-payg-bl10-cfg \
+    ssid="Wifinity PAYG Internet"
+add country="united kingdom" datapath=dpath-free datapath.bridge=br-free \
+    datapath.client-to-client-forwarding=no datapath.local-forwarding=no \
+    hide-ssid=no mode=ap name=cap-free-cfg ssid="Wifinity FREE Internet"
+add country="united kingdom" datapath=dpath-payg-bl01 datapath.bridge=\
+    br-site-payg-bl01 datapath.client-to-client-forwarding=no \
+    datapath.local-forwarding=no hide-ssid=no mode=ap name=cap-payg-bl01-cfg \
+    ssid="Wifinity PAYG Internet"
+
+/caps-man access-list
+add client-to-client-forwarding=yes mac-address=E0:B9:A5:00:CC:8B
+add client-to-client-forwarding=yes mac-address=2C:8A:72:5A:30:9E
+
+/caps-man manager
+set ca-certificate=auto certificate=auto enabled=yes
+
+/caps-man provisioning
+add action=create-dynamic-enabled disabled=yes ip-address-ranges=192.168.88.3 \
+    master-configuration=cap-payg-bl10-cfg name-format=identity
+add action=create-dynamic-enabled disabled=yes ip-address-ranges=192.168.88.4 \
+    master-configuration=cap-payg-bl01-cfg name-format=identity
+
+add action=create-dynamic-enabled identity-regexp=.*bl10* master-configuration=\
+    cap-payg-bl10-cfg name-format=identity slave-configurations=cap-free-cfg
+add action=create-dynamic-enabled identity-regexp=.*bl01* master-configuration=\
+    cap-payg-bl01-cfg name-format=identity slave-configurations=cap-free-cfg
