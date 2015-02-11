@@ -1,7 +1,7 @@
 ##################################################################CAPsMAN CONFIG BEGIN
-:global site "SITE";
-:global ssidp "pay";
-:global ssidf "free";
+:global site "site";
+:global ssidp " PAYG Internet";
+:global ssidf " FREE Internet";
 /caps-man channel
 add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=channel01 tx-power=5 width=20;
 add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=channel02 tx-power=5 width=20;
