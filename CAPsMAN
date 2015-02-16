@@ -37,7 +37,7 @@ add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united 
 /caps-man manager set ca-certificate=auto certificate=auto enabled=no;
 
 ##################################################################CAPsMAN DECONFIG END
-################################################################################# TEST
+#################################################################################CAPsMAN TEST CONFIG BEGIN
 
 /caps-man datapath
 add bridge=br-free client-to-client-forwarding=no local-forwarding=no name=\
