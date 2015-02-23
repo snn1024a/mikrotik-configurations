@@ -1,5 +1,5 @@
 ##################################################################CAPsMAN CONFIG BEGIN
-:global site "site";
+:global site "SITE";
 :global ssidp " PAYG Internet";
 :global ssidf " FREE Internet";
 /caps-man channel
@@ -36,11 +36,12 @@ add bridge="br-$site-free" client-to-client-forwarding=no local-forwarding=no na
 add channel.band=2ghz-b/g/n channel.tx-power=15 channel.width=20 country="united kingdom" datapath="dpath-$site-payg" datapath.bridge="br-$site-payg" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="$ssidp";
 add channel.band=2ghz-b/g/n channel.tx-power=15 channel.width=20 country="united kingdom" datapath="dpath-$site-free" datapath.bridge="br-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="$ssidf";
 /caps-man manager set ca-certificate=auto certificate=auto enabled=yes;
-/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-only-cfg" name-format=identity;
-/caps-man provisioning add action=create-disabled slave-configurations="cap-$site-payg-free-cfg" master-configuration="cap-$site-payg-cfg" disabled=yes name-format=identity;
+/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" name-format=identity;
+/caps-man provisioning add action=create-disabled slave-configurations="cap-$site-free-cfg" master-configuration="cap-$site-payg-cfg" disabled=yes name-format=identity;
 /system script environment remove [find where name="site"];
 /system script environment remove [find where name="ssidp"];
 /system script environment remove [find where name="ssidf"];
+/
 
 ####################################################################CAPsMAN CONFIG END
 ################################################################CAPsMAN DECONFIG BEGIN
@@ -48,7 +49,9 @@ add channel.band=2ghz-b/g/n channel.tx-power=15 channel.width=20 country="united
 /caps-man datapath remove [find];
 /caps-man configuration remove [find];
 /caps-man provisioning remove [find];
+/caps-man interface remove [find];
 /caps-man manager set ca-certificate=auto certificate=auto enabled=no;
+/
 
 ##################################################################CAPsMAN DECONFIG END
 #################################################################################CAPsMAN TEST CONFIG BEGIN
