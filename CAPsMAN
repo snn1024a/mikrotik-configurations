@@ -36,8 +36,8 @@ add bridge="br-$site-free" client-to-client-forwarding=no local-forwarding=no na
 add channel.band=2ghz-b/g/n channel.tx-power=15 channel.width=20 country="united kingdom" datapath="dpath-$site-payg" datapath.bridge="br-$site-payg" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="$ssidp";
 add channel.band=2ghz-b/g/n channel.tx-power=15 channel.width=20 country="united kingdom" datapath="dpath-$site-free" datapath.bridge="br-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="$ssidf";
 /caps-man manager set ca-certificate=auto certificate=auto enabled=yes;
-/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" name-format=identity;
-/caps-man provisioning add action=create-disabled slave-configurations="cap-$site-free-cfg" master-configuration="cap-$site-payg-cfg" disabled=yes name-format=identity;
+/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" name-format=identity comment=payg-only;
+/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" slave-configurations="cap-$site-free-cfg" name-format=identity comment=payg-and-free;
 /system script environment remove [find where name="site"];
 /system script environment remove [find where name="ssidp"];
 /system script environment remove [find where name="ssidf"];
