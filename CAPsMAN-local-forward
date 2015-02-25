@@ -1,0 +1,70 @@
+/ip dhcp-client add add-default-route=yes default-route-distance=0 dhcp-options=hostname,clientid disabled=no interface=ether1;
+:global vlanfreeid "98";
+:global vlanpaygid "99";
+/interface bridge
+add name=br-free
+add name=br-payg
+/interface wireless
+set [ find default-name=wlan1 ] band=2ghz-b/g/n default-authentication=no disabled=no l2mtu=1600 mode=ap-bridge
+/interface vlan
+add interface=ether1 l2mtu=1594 name=vlan-free vlan-id="$vlanfreeid"
+add interface=ether1 l2mtu=1594 name=vlan-payg vlan-id="$vlanpaygid"
+/interface bridge port
+add bridge=br-payg interface=vlan-payg
+add bridge=br-payg interface=wlan1
+add bridge=br-free interface=vlan-free
+/interface wireless cap
+set discovery-interfaces=ether1 enabled=yes interfaces=wlan1
+/system scheduler
+add comment="if free wifi needed enable this" disabled=yes name=\
+    "repair br-free port" on-event="interface bridge port set interface=[/inte\
+    rface wireless find where name!=wlan1] [find where inactive=yes]" policy=\
+    write start-time=startup
+add comment="if free wifi needed run manualy this  after the this ap has beeng\
+    \_provisioned by caps man with free wifi slave config but do not enable it\
+    " disabled=yes name="add virtual-ap to br-free port" on-event="interface b\
+    ridge port add interface=[/interface wireless find where name!=wlan1] brid\
+    ge=br-free" policy=write start-time=startup
+/system script environment remove [find where name="vlanfreeid"];
+/system script environment remove [find where name="vlanpaygid"];
+
+
+
+:global site "SITE";
+/caps-man channel
+add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=TX10channel01 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=TX10channel02 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2422 name=TX10channel03 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2427 name=TX10channel04 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2432 name=TX10channel05 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2437 name=TX10channel06 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2442 name=TX10channel07 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2447 name=TX10channel08 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2452 name=TX10channel09 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2457 name=TX10channel10 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2462 name=TX10channel11 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2467 name=TX10channel12 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2472 name=TX10channel13 tx-power=10 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=TX15channel01 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=TX15channel02 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2422 name=TX15channel03 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2427 name=TX15channel04 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2432 name=TX15channel05 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2437 name=TX15channel06 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2442 name=TX15channel07 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2447 name=TX15channel08 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2452 name=TX15channel09 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2457 name=TX15channel10 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2462 name=TX15channel11 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2467 name=TX15channel12 tx-power=15 width=20
+add band=2ghz-b/g/n extension-channel=disabled frequency=2472 name=TX15channel13 tx-power=15 width=20
+/caps-man datapath
+add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-payg"
+add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-free"
+/caps-man configuration
+add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-payg" datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="Wifinity PAYG Internet"
+add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="Wifinity FREE Internet"
+/caps-man manager set ca-certificate=auto certificate=auto enabled=yes
+/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" name-format=identity
+/system script environment remove [find where name="site"];
+/
