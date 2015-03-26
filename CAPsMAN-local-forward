@@ -29,42 +29,33 @@ add comment="if free wifi needed run manualy this  after the this ap has beeng\
 /system script environment remove [find where name="vlanpaygid"];
 
 
-
-:global site "SITE";
+:global site "SITE"
 /caps-man channel
-add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=TX10channel01 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=TX10channel02 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2422 name=TX10channel03 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2427 name=TX10channel04 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2432 name=TX10channel05 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2437 name=TX10channel06 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2442 name=TX10channel07 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2447 name=TX10channel08 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2452 name=TX10channel09 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2457 name=TX10channel10 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2462 name=TX10channel11 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2467 name=TX10channel12 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2472 name=TX10channel13 tx-power=10 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2412 name=TX15channel01 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2417 name=TX15channel02 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2422 name=TX15channel03 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2427 name=TX15channel04 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2432 name=TX15channel05 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2437 name=TX15channel06 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2442 name=TX15channel07 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2447 name=TX15channel08 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2452 name=TX15channel09 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2457 name=TX15channel10 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2462 name=TX15channel11 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2467 name=TX15channel12 tx-power=15 width=20
-add band=2ghz-b/g/n extension-channel=disabled frequency=2472 name=TX15channel13 tx-power=15 width=20
+add band=2ghz-b/g/n frequency=2412 name=ch01
+add band=2ghz-b/g/n frequency=2417 name=ch02
+add band=2ghz-b/g/n frequency=2422 name=ch03
+add band=2ghz-b/g/n frequency=2427 name=ch04
+add band=2ghz-b/g/n frequency=2432 name=ch05
+add band=2ghz-b/g/n frequency=2437 name=ch06
+add band=2ghz-b/g/n frequency=2442 name=ch07
+add band=2ghz-b/g/n frequency=2447 name=ch08
+add band=2ghz-b/g/n frequency=2452 name=ch09
+add band=2ghz-b/g/n frequency=2457 name=ch10
+add band=2ghz-b/g/n frequency=2462 name=ch11
+add band=2ghz-b/g/n frequency=2467 name=ch12
+add band=2ghz-b/g/n frequency=2472 name=ch13
 /caps-man datapath
 add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-payg"
 add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-free"
+/caps-man security
+add authentication-types=wpa2-psk encryption=aes-ccm name=wpa2psk
 /caps-man configuration
-add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-payg" datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="Wifinity PAYG Internet"
-add channel.band=2ghz-b/g/n channel.tx-power=5 channel.width=20 country="united kingdom" datapath="dpath-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="Wifinity FREE Internet"
-/caps-man manager set ca-certificate=auto certificate=auto enabled=yes
-/caps-man provisioning add action=create-disabled master-configuration="cap-$site-payg-cfg" name-format=identity
+add country="united kingdom" datapath=dpath-$site-payg datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name=cap-$site-payg-cfg security=wpa2psk security.passphrase=wifinity ssid="test"
+/caps-man access-list
+add action=reject signal-range=-120..-85
+/caps-man manager
+set ca-certificate=auto certificate=auto enabled=yes
+/caps-man provisioning
+add action=create-enabled master-configuration=cap-$site-payg-cfg name-format=identity
 /system script environment remove [find where name="site"];
 /
