@@ -47,15 +47,13 @@ add band=2ghz-b/g/n frequency=2472 name=ch13
 /caps-man datapath
 add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-payg"
 add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-free"
-/caps-man security
-add authentication-types=wpa2-psk encryption=aes-ccm name=wpa2psk
 /caps-man configuration
-add country="united kingdom" datapath=dpath-$site-payg datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name=cap-$site-payg-cfg security=wpa2psk security.passphrase=wifinity ssid="test"
+add country="united kingdom" datapath="dpath-$site-payg" hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="$site test"
 /caps-man access-list
 add action=reject signal-range=-120..-85
 /caps-man manager
 set ca-certificate=auto certificate=auto enabled=yes
 /caps-man provisioning
-add action=create-enabled master-configuration=cap-$site-payg-cfg name-format=identity
+add action=create-enabled master-configuration="cap-$site-payg-cfg" name-format=identity
 /system script environment remove [find where name="site"];
 /
