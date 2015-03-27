@@ -1,0 +1,30 @@
+:global site "SITE"
+/caps-man channel
+add band=2ghz-b/g/n frequency=2412 name=ch01
+add band=2ghz-b/g/n frequency=2417 name=ch02
+add band=2ghz-b/g/n frequency=2422 name=ch03
+add band=2ghz-b/g/n frequency=2427 name=ch04
+add band=2ghz-b/g/n frequency=2432 name=ch05
+add band=2ghz-b/g/n frequency=2437 name=ch06
+add band=2ghz-b/g/n frequency=2442 name=ch07
+add band=2ghz-b/g/n frequency=2447 name=ch08
+add band=2ghz-b/g/n frequency=2452 name=ch09
+add band=2ghz-b/g/n frequency=2457 name=ch10
+add band=2ghz-b/g/n frequency=2462 name=ch11
+add band=2ghz-b/g/n frequency=2467 name=ch12
+add band=2ghz-b/g/n frequency=2472 name=ch13
+/caps-man datapath
+add client-to-client-forwarding=no local-forwarding=yes name=dpath-SITE-payg
+/caps-man access-list
+add action=reject signal-range=-120..-85
+/caps-man configuration
+add country="united kingdom" datapath=dpath-SITE-payg datapath.bridge=br-HPCAMB-payg datapath.client-to-client-forwarding=no datapath.local-forwarding=yes \
+    hide-ssid=no mode=ap name=cap-SITE-payg-cfg ssid="SITE payg test"
+add country="united kingdom" datapath=dpath-SITE-free datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name=\
+    cap-SITE-free-cfg ssid="SITE free test"
+/caps-man datapath
+add bridge=br-HPCAMB-free client-to-client-forwarding=no local-forwarding=no name=dpath-SITE-free
+/caps-man manager
+set ca-certificate=auto certificate=auto enabled=yes
+/caps-man provisioning
+add action=create-enabled master-configuration=cap-SITE-payg-cfg name-format=identity radio-mac=FF:FF:FF:FF:FF:00 slave-configurations=cap-SITE-free-cfg
