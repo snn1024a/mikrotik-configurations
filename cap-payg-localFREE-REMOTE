@@ -1,4 +1,15 @@
+#######################################################################DECONFIG
+/caps-man channel remove [find];
+/caps-man datapath remove [find];
+/caps-man configuration remove [find];
+/caps-man provisioning remove [find];
+/caps-man interface remove [find];
+/caps-man security remove [find];
+/caps-man access-list remove [find];
+/caps-man manager set ca-certificate=auto certificate=auto enabled=no;
+#######################################################################CONFIG
 :global site "SITE"
+:global freeRADIOmac "4C:5E:0C:85:19:30"
 /caps-man channel
 add band=2ghz-b/g/n frequency=2412 name=ch01
 add band=2ghz-b/g/n frequency=2417 name=ch02
@@ -13,18 +24,16 @@ add band=2ghz-b/g/n frequency=2457 name=ch10
 add band=2ghz-b/g/n frequency=2462 name=ch11
 add band=2ghz-b/g/n frequency=2467 name=ch12
 add band=2ghz-b/g/n frequency=2472 name=ch13
-/caps-man datapath
-add client-to-client-forwarding=no local-forwarding=yes name=dpath-SITE-payg
-/caps-man access-list
-add action=reject signal-range=-120..-85
+/caps-man datapath add client-to-client-forwarding=no local-forwarding=yes name="dpath-$site-payg"
+/caps-man access-list add action=reject signal-range=-120..-85
 /caps-man configuration
-add country="united kingdom" datapath=dpath-SITE-payg datapath.bridge=br-HPCAMB-payg datapath.client-to-client-forwarding=no datapath.local-forwarding=yes \
-    hide-ssid=no mode=ap name=cap-SITE-payg-cfg ssid="SITE payg test"
-add country="united kingdom" datapath=dpath-SITE-free datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name=\
-    cap-SITE-free-cfg ssid="SITE free test"
-/caps-man datapath
-add bridge=br-HPCAMB-free client-to-client-forwarding=no local-forwarding=no name=dpath-SITE-free
-/caps-man manager
-set ca-certificate=auto certificate=auto enabled=yes
+add country="united kingdom" datapath="dpath-$site-payg" datapath.bridge=br-HPCAMB-payg datapath.client-to-client-forwarding=no datapath.local-forwarding=yes hide-ssid=no mode=ap name="cap-$site-payg-cfg" ssid="$site payg test"
+add country="united kingdom" datapath="dpath-$site-free" datapath.client-to-client-forwarding=no datapath.local-forwarding=no hide-ssid=no mode=ap name="cap-$site-free-cfg" ssid="$site free test"
+/caps-man datapath add bridge=br-HPCAMB-free client-to-client-forwarding=no local-forwarding=no name="dpath-$site-free"
+/caps-man manager set ca-certificate=auto certificate=auto enabled=yes
 /caps-man provisioning
-add action=create-enabled master-configuration=cap-SITE-payg-cfg name-format=identity radio-mac=FF:FF:FF:FF:FF:00 slave-configurations=cap-SITE-free-cfg
+add action=create-enabled master-configuration="cap-$site-payg-cfg" name-format=identity radio-mac="$freeRADIOmac" slave-configurations="cap-$site-free-cfg"
+add action=create-enabled master-configuration="cap-$site-payg-cfg" name-format=identity radio-mac=00:00:00:00:00:00
+/system script environment remove [find where name="site"];
+/system script environment remove [find where name="freeRADIOmac"];
+/
